@@ -29,21 +29,23 @@ export const plugin: PluginFunction<Config, Types.ComplexPluginOutput> = (
 
   let content: string[] = [
     `\
-    export class TypedOperation<Result, Variables> = {
-      /**
-       * This type is used to ensure that the variables you pass in to the query are assignable to Variables
-       * and that the Result is assignable to whatever you pass your result to. The method is never actually
-       * implemented, but the type is valid because we list it as optional
-       */
-      __apiType?: (variables: Variables) => Result;
+export class TypedOperation<Result, Variables> {
+  /**
+   * This type is used to ensure that the variables you pass in to the query are assignable to Variables
+   * and that the Result is assignable to whatever you pass your result to. The method is never actually
+   * implemented, but the type is valid because we list it as optional
+   */
+  __apiType?: (variables: Variables) => Result;
 
-      constructor(public readonly operation: string, public readonly operationType: "query" | "mutation" | "subscription") {}
-    };
+  constructor(public readonly operation: string, public readonly operationType: "query" | "mutation" | "subscription") {}
+};
     `,
   ];
 
   return {
-    prepend: allAst.definitions.length === 0 ? [] : visitor.getImports(),
+    // delete the document node import since we dont use it
+    prepend:
+      allAst.definitions.length === 0 ? [] : visitor.getImports().filter((im) => !im.includes('{ DocumentNode }')),
     content: [
       ...content,
       // we dont need fragments
