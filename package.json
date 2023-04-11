@@ -1,0 +1,55 @@
+{
+  "name": "graphql-codegen-typed-operation",
+  "author": "IlijaNL",
+  "version": "0.0.0",
+  "types": "dist/plugin.d.ts",
+  "main": "dist/plugin.js",
+  "files": [
+    "./dist",
+    "CHANGELOG.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ilijaNL/graphql-codegen-typed-operation.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/ilijaNL/graphql-codegen-typed-operation/issues"
+  },
+  "homepage": "https://github.com/ilijaNL/graphql-codegen-typed-operation#readme",
+  "scripts": {
+    "build": "tsc",
+    "tc": "tsc --noEmit",
+    "ci:publish": "yarn build && changeset publish",
+    "test": "tap --ts --no-check-coverage  tests/*.test.ts",
+    "posttest": "tap --coverage-report=html --no-check-coverage"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "@graphql-codegen/plugin-helpers": "^4.2.0",
+    "@graphql-codegen/visitor-plugin-common": "^3.1.0",
+    "@graphql-tools/documents": "^0.1.0",
+    "autobind": "^1.0.3",
+    "change-case-all": "^1.0.15",
+    "graphql": "^16.6.0"
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.26.0",
+    "@graphql-tools/schema": "^9.0.17",
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^16.0.0",
+    "@types/tap": "^15.0.8",
+    "eslint": "^8.4.1",
+    "eslint-config-prettier": "^8.4.0",
+    "graphql-tag": "^2.12.6",
+    "tap": "^16.3.4",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.9.0"
+  }
+}
