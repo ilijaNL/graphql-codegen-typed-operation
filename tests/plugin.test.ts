@@ -145,7 +145,7 @@ tap.test('public directive', async (t) => {
       fragment user on User {
         name
       }
-      query pUser @ppublic {
+      query pUser @p__public {
         user {
           ...user
         }
@@ -187,4 +187,47 @@ tap.test('options', async (t) => {
   );
 
   t.matchSnapshot(result.content);
+});
+
+tap.test('additional directives', async (t) => {
+  const result = await runPlugin([
+    parse(gql`
+      fragment user on User {
+        name
+      }
+      query pUser @p__abc(abc: 123, works: "awdawd", bool: true) {
+        user {
+          ...user
+        }
+      }
+
+      query kUser @p__ddd(n: null, n: 123.22) {
+        user {
+          ...user
+        }
+      }
+    `),
+    parse(gql`
+      query cUser {
+        user {
+          ...user
+        }
+      }
+    `),
+  ]);
+
+  t.matchSnapshot(result.content);
+
+  t.rejects(
+    async () =>
+      await runPlugin([
+        parse(gql`
+          query cUser @p__c(ttl: {}) {
+            user {
+              ...user
+            }
+          }
+        `),
+      ])
+  );
 });

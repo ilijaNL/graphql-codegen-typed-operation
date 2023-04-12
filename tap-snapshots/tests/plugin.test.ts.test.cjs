@@ -5,6 +5,54 @@
  * Make sure to inspect the output below.  Do not ignore changes!
  */
 'use strict'
+exports[`tests/plugin.test.ts TAP additional directives > must match snapshot 1`] = `
+export type TypedOperation<Result, Variables> = {
+  readonly operation: string;
+  readonly operationType: "query" | "mutation" | "subscription";
+  /**
+   * This type is used to ensure that the variables you pass in to the query are assignable to Variables
+   * and that the Result is assignable to whatever you pass your result to. The method is never actually
+   * implemented, but the type is valid because we list it as optional
+   */
+  __apiType?: (variables: Variables) => Result;
+}
+
+export const PUserDocument: TypedOperation<PUserQuery, PUserQueryVariables> = { operation: "pUser", operationType: "query" };
+export const KUserDocument: TypedOperation<KUserQuery, KUserQueryVariables> = { operation: "kUser", operationType: "query" };
+export const CUserDocument: TypedOperation<CUserQuery, CUserQueryVariables> = { operation: "cUser", operationType: "query" };
+
+export const OPERATIONS = [
+  {
+    "operationName": "pUser",
+    "operationType": "query",
+    "query": "fragment user on User { name } query pUser { user { ...user } }",
+    "behaviour": {
+      "abc": {
+        "abc": 123,
+        "works": "awdawd",
+        "bool": true
+      }
+    }
+  },
+  {
+    "operationName": "kUser",
+    "operationType": "query",
+    "query": "fragment user on User { name } query kUser { user { ...user } }",
+    "behaviour": {
+      "ddd": {
+        "n": 123.22
+      }
+    }
+  },
+  {
+    "operationName": "cUser",
+    "operationType": "query",
+    "query": "fragment user on User { name } query cUser { user { ...user } }",
+    "behaviour": {}
+  }
+]
+`
+
 exports[`tests/plugin.test.ts TAP cached directive > must match snapshot 1`] = `
 export type TypedOperation<Result, Variables> = {
   readonly operation: string;

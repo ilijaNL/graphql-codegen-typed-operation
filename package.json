@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ilijaNL/graphql-codegen-typed-operation#readme",
   "scripts": {
     "build": "tsc",
+    "lint": "eslint ./src",
     "tc": "tsc --noEmit",
     "ci:publish": "yarn build && changeset publish",
     "test": "tap --ts --no-check-coverage  tests/*.test.ts",
@@ -47,6 +48,8 @@
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^16.0.0",
     "@types/tap": "^15.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.4.0",
     "graphql": "16.6.0",
