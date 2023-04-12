@@ -51,7 +51,7 @@ export type TypedOperation<Result, Variables> = {
       // we dont need fragments
       // visitor.fragments,
       ...visitorResult.definitions.filter((t: any) => typeof t === 'string'),
-      `\nexport const OPERATIONS = ${JSON.stringify(Array.from(visitor.operationMap.values()))}`,
+      `\nexport const OPERATIONS = ${JSON.stringify(Array.from(visitor.operationMap.values()), null, 2)}`,
     ].join('\n'),
   };
 };
