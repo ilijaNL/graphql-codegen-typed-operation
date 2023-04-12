@@ -8,10 +8,10 @@ import {
 } from '@graphql-codegen/visitor-plugin-common';
 import autoBind from 'auto-bind';
 import { pascalCase } from 'change-case-all';
-import { GraphQLSchema, OperationDefinitionNode, print, parse, visit, Kind } from 'graphql';
+import { GraphQLSchema, OperationDefinitionNode, print, parse, visit, Kind, ArgumentNode, ValueNode } from 'graphql';
 import { printExecutableGraphQLDocument } from '@graphql-tools/documents';
 
-interface TypeScriptDocumentNodesVisitorPluginConfig extends RawClientSideBasePluginConfig {}
+type TypeScriptDocumentNodesVisitorPluginConfig = RawClientSideBasePluginConfig;
 
 type OperationDefinition = {
   operationName: string;
@@ -19,9 +19,43 @@ type OperationDefinition = {
   query: string;
   behaviour: Partial<{
     ttl: number;
-    public: boolean;
-  }>;
+  }> &
+    Record<string, any>;
 };
+
+function extractValue(value: ValueNode) {
+  /*
+  VariableNode | IntValueNode | FloatValueNode | StringValueNode | BooleanValueNode | NullValueNode | EnumValueNode | ListValueNode | ObjectValueNode
+  */
+  if (value.kind === Kind.INT || value.kind === Kind.FLOAT) {
+    return +value.value;
+  }
+  if (value.kind === Kind.STRING) {
+    return value.value;
+  }
+  if (value.kind === Kind.BOOLEAN) {
+    return value.value;
+  }
+  if (value.kind === Kind.NULL) {
+    return null;
+  }
+  if (value.kind === Kind.ENUM) {
+    return value.value;
+  }
+
+  throw new Error('directive with argumentType ' + value.kind + ' not supported');
+}
+
+function extractArgumentValue(args: readonly ArgumentNode[]) {
+  if (args.length === 0) {
+    return true;
+  }
+
+  return args.reduce((agg, curr) => {
+    agg[curr.name.value] = extractValue(curr.value);
+    return agg;
+  }, {} as Record<string, any>);
+}
 
 export class TypeScriptDocumentNodesVisitor extends ClientSideBaseVisitor<
   TypeScriptDocumentNodesVisitorPluginConfig,
@@ -87,8 +121,12 @@ export class TypeScriptDocumentNodesVisitor extends ClientSideBaseVisitor<
     const finalDoc = visit(docNode, {
       [Kind.DIRECTIVE]: {
         enter(node) {
-          if (node.name.value === 'ppublic') {
-            behaviour.public = true;
+          if (node.name.value.startsWith('p__') && node.name.value.length > 3) {
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            const key = node.name.value.split('p__')[1]!;
+            const value = node.arguments ? extractArgumentValue(node.arguments) : true;
+            behaviour[key] = value;
+
             return null;
           }
           if (node.name.value === 'pcached') {

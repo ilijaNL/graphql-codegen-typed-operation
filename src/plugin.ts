@@ -11,6 +11,7 @@ export const plugin: PluginFunction<Config, Types.ComplexPluginOutput> = (
   config: Config
 ) => {
   const documents = rawDocuments;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const allAst = concatAST(documents.map((v) => v.document!));
 
   const allFragments: LoadedFragment[] = [
@@ -27,7 +28,7 @@ export const plugin: PluginFunction<Config, Types.ComplexPluginOutput> = (
   const visitor = new TypeScriptDocumentNodesVisitor(schema, allFragments, config, documents);
   const visitorResult = oldVisit(allAst, { leave: visitor as any });
 
-  let content: string[] = [
+  const content: string[] = [
     `\
 export type TypedOperation<Result, Variables> = {
   readonly operation: string;
