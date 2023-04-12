@@ -1,5 +1,11 @@
 # graphql-codegen-typed-operation
 
+## 0.0.5
+
+### Patch Changes
+
+- 140a059: Additional directives
+
 ## 0.0.4
 
 ### Patch Changes
