@@ -67,10 +67,7 @@ tap.test('mutation', async (t) => {
     'export const MutDocument: TypedOperation<MutMutation, MutMutationVariables> = { operation: "mut", operationType: "mutation" };'
   );
 
-  t.match(
-    result.content,
-    'export const OPERATIONS = [{"operationName":"mut","operationType":"mutation","query":"mutation mut { create }","behaviour":{}}]'
-  );
+  t.matchSnapshot(result.content);
 });
 
 tap.test('throws when no operation name', async (t) => {
@@ -105,10 +102,7 @@ tap.test('fragment', async (t) => {
     'export const UserDocument: TypedOperation<UserQuery, UserQueryVariables> = { operation: "user", operationType: "query" };'
   );
 
-  t.match(
-    result.content,
-    'export const OPERATIONS = [{"operationName":"user","operationType":"query","query":"fragment user on User { name } query user { user { ...user } }","behaviour":{}}]'
-  );
+  t.matchSnapshot(result.content);
 });
 
 tap.test('cached directive', async (t) => {
@@ -142,10 +136,7 @@ tap.test('cached directive', async (t) => {
     'export const CUserDocument: TypedOperation<CUserQuery, CUserQueryVariables> = { operation: "cUser", operationType: "query" };'
   );
 
-  t.match(
-    result.content,
-    `[{"operationName":"cachedUser","operationType":"query","query":"fragment user on User { name } query cachedUser { user { ...user } }","behaviour":{"ttl":1}},{"operationName":"cUser","operationType":"query","query":"fragment user on User { name } query cUser @cached(ttl: 1) { user { ...user } }","behaviour":{}}]`
-  );
+  t.matchSnapshot(result.content);
 });
 
 tap.test('public directive', async (t) => {
@@ -169,10 +160,7 @@ tap.test('public directive', async (t) => {
     `),
   ]);
 
-  t.match(
-    result.content,
-    `[{"operationName":"pUser","operationType":"query","query":"fragment user on User { name } query pUser { user { ...user } }","behaviour":{"public":true}},{"operationName":"cUser","operationType":"query","query":"fragment user on User { name } query cUser { user { ...user } }","behaviour":{}}]`
-  );
+  t.matchSnapshot(result.content);
 });
 
 tap.test('options', async (t) => {
@@ -198,8 +186,5 @@ tap.test('options', async (t) => {
     'export const UserDocumentTS: TypedOperation<TPUserQueryTS, TPUserQueryVariablesTS> = { operation: "user", operationType: "query" };'
   );
 
-  t.match(
-    result.content,
-    'export const OPERATIONS = [{"operationName":"user","operationType":"query","query":"fragment user on User { name } query user { user { ...user } }","behaviour":{}}]'
-  );
+  t.matchSnapshot(result.content);
 });

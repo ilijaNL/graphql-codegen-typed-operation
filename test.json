@@ -1,0 +1,8 @@
+[
+  {
+    "operationName": "user",
+    "operationType": "query",
+    "query": "fragment user on User { name } query user { user { ...user } }",
+    "behaviour": {}
+  }
+]
