@@ -49,7 +49,7 @@ tap.test('query', async (t) => {
 
   t.match(
     result.content,
-    'export const TestDocument = new TypedOperation<TestQuery, TestQueryVariables>("test", "query");'
+    'export const TestDocument: TypedOperation<TestQuery, TestQueryVariables> = { operation: "test", operationType: "query" };'
   );
 });
 
@@ -64,7 +64,7 @@ tap.test('mutation', async (t) => {
 
   t.match(
     result.content,
-    'export const MutDocument = new TypedOperation<MutMutation, MutMutationVariables>("mut", "mutation");'
+    'export const MutDocument: TypedOperation<MutMutation, MutMutationVariables> = { operation: "mut", operationType: "mutation" };'
   );
 
   t.match(
@@ -102,7 +102,7 @@ tap.test('fragment', async (t) => {
 
   t.match(
     result.content,
-    'export const UserDocument = new TypedOperation<UserQuery, UserQueryVariables>("user", "query");'
+    'export const UserDocument: TypedOperation<UserQuery, UserQueryVariables> = { operation: "user", operationType: "query" };'
   );
 
   t.match(
@@ -134,17 +134,44 @@ tap.test('cached directive', async (t) => {
 
   t.match(
     result.content,
-    'export const CachedUserDocument = new TypedOperation<CachedUserQuery, CachedUserQueryVariables>("cachedUser", "query");'
+    'export const CachedUserDocument: TypedOperation<CachedUserQuery, CachedUserQueryVariables> = { operation: "cachedUser", operationType: "query" };'
   );
 
   t.match(
     result.content,
-    'export const CUserDocument = new TypedOperation<CUserQuery, CUserQueryVariables>("cUser", "query");'
+    'export const CUserDocument: TypedOperation<CUserQuery, CUserQueryVariables> = { operation: "cUser", operationType: "query" };'
   );
 
   t.match(
     result.content,
     `[{"operationName":"cachedUser","operationType":"query","query":"fragment user on User { name } query cachedUser { user { ...user } }","behaviour":{"ttl":1}},{"operationName":"cUser","operationType":"query","query":"fragment user on User { name } query cUser @cached(ttl: 1) { user { ...user } }","behaviour":{}}]`
+  );
+});
+
+tap.test('public directive', async (t) => {
+  const result = await runPlugin([
+    parse(gql`
+      fragment user on User {
+        name
+      }
+      query pUser @ppublic {
+        user {
+          ...user
+        }
+      }
+    `),
+    parse(gql`
+      query cUser {
+        user {
+          ...user
+        }
+      }
+    `),
+  ]);
+
+  t.match(
+    result.content,
+    `[{"operationName":"pUser","operationType":"query","query":"fragment user on User { name } query pUser { user { ...user } }","behaviour":{"public":true}},{"operationName":"cUser","operationType":"query","query":"fragment user on User { name } query cUser { user { ...user } }","behaviour":{}}]`
   );
 });
 
@@ -168,7 +195,7 @@ tap.test('options', async (t) => {
 
   t.match(
     result.content,
-    'export const UserDocumentTS = new TypedOperation<TPUserQueryTS, TPUserQueryVariablesTS>("user", "query");'
+    'export const UserDocumentTS: TypedOperation<TPUserQueryTS, TPUserQueryVariablesTS> = { operation: "user", operationType: "query" };'
   );
 
   t.match(

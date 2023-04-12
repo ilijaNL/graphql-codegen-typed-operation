@@ -19,6 +19,7 @@ type OperationDefinition = {
   query: string;
   behaviour: Partial<{
     ttl: number;
+    public: boolean;
   }>;
 };
 
@@ -86,6 +87,10 @@ export class TypeScriptDocumentNodesVisitor extends ClientSideBaseVisitor<
     const finalDoc = visit(docNode, {
       [Kind.DIRECTIVE]: {
         enter(node) {
+          if (node.name.value === 'ppublic') {
+            behaviour.public = true;
+            return null;
+          }
           if (node.name.value === 'pcached') {
             visit(node, {
               [Kind.ARGUMENT]: {
@@ -117,6 +122,6 @@ export class TypeScriptDocumentNodesVisitor extends ClientSideBaseVisitor<
       behaviour,
     });
 
-    return `export const ${documentVariableName} = new TypedOperation<${operationResultType}, ${operationVariablesTypes}>("${operationName}", "${node.operation}");`;
+    return `export const ${documentVariableName}: TypedOperation<${operationResultType}, ${operationVariablesTypes}> = { operation: "${operationName}", operationType: "${node.operation}" };`;
   }
 }
